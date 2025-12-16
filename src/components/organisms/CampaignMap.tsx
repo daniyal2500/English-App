@@ -419,14 +419,6 @@ export const CampaignMap: React.FC<CampaignMapProps> = ({ onOpenDay }) => {
                                             </span>
                                         )}
                                         
-                                        {/* لیبل "بزن بریم" پایین پیک */}
-                                        {isActive && (
-                                             <div className="absolute -bottom-10 animate-bounce z-30"> 
-                                                <div className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white px-5 py-2 rounded-full text-sm font-bold shadow-lg border-2 border-yellow-300/50 tracking-wide min-w-[100px] text-center">
-                                                    بزن بریم!
-                                                </div>
-                                             </div>
-                                        )}
                                     </div>
                                 </div>
                             );
