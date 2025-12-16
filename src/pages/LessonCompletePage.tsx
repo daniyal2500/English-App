@@ -10,8 +10,42 @@ import { useAppStore } from '../store/useAppStore';
 
 export const LessonCompletePage: React.FC = () => {
    const navigate = useNavigate();
-   // اصلاح: استفاده از activeLesson به جای activeLevel
-   const { activeLesson, user } = useAppStore();
+   // اضافه کردن days به استور برای بررسی وضعیت روز
+   const { activeLesson, user, days } = useAppStore();
+
+   const handleContinue = () => {
+      // اگر به هر دلیلی درس فعال نبود (محض اطمینان)، برو خانه
+      if (!activeLesson) {
+         navigate('/home');
+         return;
+      }
+
+      // 1. پیدا کردن روزِ مربوط به این درس
+      const currentDay = days.find(d => d.id === activeLesson.dayId);
+
+      // اگر روز پیدا نشد (نباید اتفاق بیفتد)، برو خانه
+      if (!currentDay) {
+         navigate('/home');
+         return;
+      }
+
+      // 2. بررسی اینکه آیا "کل" درس‌های این روز تکمیل شده‌اند؟
+      // لاجیک: آیا برای تک‌تک درس‌های این روز، رکوردی در لیست تکمیل‌شده‌های کاربر وجود دارد؟
+      const isDayFullyComplete = currentDay.lessons.every(lesson =>
+         user.completedLessons.some(completed => completed.lessonId === lesson.id)
+      );
+
+      // 3. تصمیم‌گیری برای نویگیشن
+      if (isDayFullyComplete) {
+         // اگر روز تمام شده، برگرد به نقشه اصلی (تا روز بعدی باز شود)
+         console.log("Day completed! Going to Main Map.");
+         navigate('/home');
+      } else {
+         // اگر هنوز درس‌هایی در این روز باقی مانده، برگرد به ساب‌رودمپ
+         console.log("More lessons remain. Going back to Day Level.");
+         navigate(`/day/${activeLesson.dayId}`);
+      }
+   };
 
    return (
       <ScreenWrapper theme="stage">
@@ -27,7 +61,6 @@ export const LessonCompletePage: React.FC = () => {
             <div className="grid grid-cols-2 gap-4 w-full mb-6">
                <div className="bg-slate-800/50 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex flex-col items-center">
                   <span className="text-slate-400 text-xs mb-1 uppercase tracking-wider">امتیاز تجربه</span>
-                  {/* اصلاح: استفاده از activeLesson */}
                   <span className="text-2xl font-bold text-purple-400 drop-shadow-md">
                      +{activeLesson?.xpReward || 10} XP
                   </span>
@@ -55,8 +88,9 @@ export const LessonCompletePage: React.FC = () => {
                </div>
             </div>
 
-            <Button fullWidth onClick={() => navigate('/home')}>
-               بازگشت به نقشه
+            {/* دکمه با لاجیک جدید */}
+            <Button fullWidth onClick={handleContinue}>
+               ادامه
             </Button>
          </div>
       </ScreenWrapper>

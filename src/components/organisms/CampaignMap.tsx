@@ -3,19 +3,18 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { Lock, Check, Music, Mic2, Star, Play } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
-import { DayNode } from '../../types'; // تایپ درست
+import { DayNode } from '../../types';
 
 interface CampaignMapProps {
     onOpenDay: (dayId: number) => void;
 }
 
 export const CampaignMap: React.FC<CampaignMapProps> = ({ onOpenDay }) => {
-    // استفاده از days به جای levels
     const { days, chapters, user } = useAppStore();
     const containerRef = useRef<HTMLDivElement>(null);
     const activeNodeRef = useRef<HTMLDivElement>(null);
 
-    // --- تنظیمات ظاهری (دقیقاً نسخه اورجینال) ---
+    // --- تنظیمات ظاهری ---
     const CONFIG = {
         START_Y: 100,
         LEVEL_HEIGHT: 180,     
@@ -28,7 +27,7 @@ export const CampaignMap: React.FC<CampaignMapProps> = ({ onOpenDay }) => {
     const START_COORDS = { x: 643, y: 151 };
     const END_COORDS = { x: 286, y: 142 };
 
-    // --- پالت رنگ‌های نسخه اول ---
+    // --- پالت رنگ‌ها ---
     const PREMIUM_THEMES = [
         { name: 'Royal Purple', start: '#7e22ce', end: '#3b0764', border: '#a855f7', shadow: 'shadow-purple-500/30', glow: 'bg-purple-600' },
         { name: 'Heavy Bronze', start: '#92400e', end: '#451a03', border: '#d97706', shadow: 'shadow-amber-700/30', glow: 'bg-amber-700' },
@@ -51,7 +50,7 @@ export const CampaignMap: React.FC<CampaignMapProps> = ({ onOpenDay }) => {
         }
     }, [days]);
 
-    // --- موتور محاسباتی (اصلاح شده برای ساختار جدید days) ---
+    // --- موتور محاسباتی (اصلاح شده برای لاجیک دقیق قفل/باز) ---
     const { renderItems, totalHeight, pathData } = useMemo(() => {
         if (!days || days.length === 0) return { renderItems: [], totalHeight: 800, pathData: "" };
 
@@ -104,39 +103,64 @@ export const CampaignMap: React.FC<CampaignMapProps> = ({ onOpenDay }) => {
                 currentY += 100;
 
                 // C. پیک‌ها (روزها)
-                // مرتب‌سازی روزها بر اساس شماره روز
+                
                 const weekDays = daysByWeek[weekNum].sort((a, b) => a.dayNumber - b.dayNumber);
 
                 weekDays.forEach(dayNode => {
                     const x = Math.sin(globalIndex * 0.6) * CONFIG.AMPLITUDE;
                     
-                    // --- محاسبه وضعیت روز (Node Logic) ---
-                    // درس اول و آخر این روز رو پیدا می‌کنیم
-                    // (چون lessons توی سرویس مرتب شده، اولین و آخرین المنت درسته)
-                    const firstLesson = dayNode.lessons[0];
-                    const lastLesson = dayNode.lessons[dayNode.lessons.length - 1];
+                    // --- محاسبه دقیق وضعیت (Logic Fix) ---
                     
-                    let isActive = false;
-                    let isLocked = true;
-                    let isCompleted = false;
-                    let stars = 0;
+                    // 1. آیا این روز کامل شده؟ (همه درس‌ها پاس شدن؟)
+                    const totalLessons = dayNode.lessons.length;
+                    const passedLessonsCount = dayNode.lessons.filter(lesson => 
+                        user.completedLessons.some(r => r.lessonId === lesson.id)
+                    ).length;
+                    
+                    const isCompleted = totalLessons > 0 && totalLessons === passedLessonsCount;
 
-                    if (firstLesson && lastLesson) {
-                        // روز کامل شده اگر آخرین درسش پاس شده باشه
-                        isCompleted = user.completedLessons.some(r => r.lessonId === lastLesson.id);
-                        
-                        // روز فعاله اگر کامل نشده باشه ولی درس اولش باز باشه
-                        // (درس بازه اگر idش کوچکتر یا مساوی currentLessonId باشه)
-                        const isFirstOpen = firstLesson.id <= user.currentLessonId;
-                        isActive = !isCompleted && isFirstOpen;
-                        
-                        // قفل: اگر هنوز نرسیدیم
-                        isLocked = !isCompleted && !isActive;
+                    // 2. محاسبه میانگین ستاره‌ها برای نمایش روی پیک
+                    let totalStars = 0;
+                    if (isCompleted) {
+                        dayNode.lessons.forEach(lesson => {
+                            const result = user.completedLessons.find(r => r.lessonId === lesson.id);
+                            if (result) totalStars += result.stars;
+                        });
                     }
+                    const stars = isCompleted ? Math.round(totalStars / totalLessons) : 0;
+
+                    // 3. آیا این روز قفل است؟ (وابسته به روز قبلی)
+                    let isLocked = true;
+                    
+                    // پیدا کردن ایندکس روز جاری در لیست اصلی days
+                    // (برای چک کردن وضعیت روز قبلی)
+                    const currentDayIndex = days.findIndex(d => d.id === dayNode.id);
+                    
+                    if (currentDayIndex === 0) {
+                        // روز اول همیشه باز است
+                        isLocked = false;
+                    } else {
+                        // روزهای بعدی: فقط اگر روز *قبلی* کامل شده باشد باز می‌شوند
+                        const prevDay = days[currentDayIndex - 1];
+                        if (prevDay) {
+                            const prevTotal = prevDay.lessons.length;
+                            const prevPassed = prevDay.lessons.filter(l => 
+                                user.completedLessons.some(r => r.lessonId === l.id)
+                            ).length;
+                            
+                            // اگر روز قبلی کاملاً تمام شده، این روز باز می‌شود
+                            if (prevTotal > 0 && prevTotal === prevPassed) {
+                                isLocked = false;
+                            }
+                        }
+                    }
+
+                    // 4. آیا این روز فعال است؟ (باز است ولی هنوز کامل نشده)
+                    const isActive = !isLocked && !isCompleted;
 
                     items.push({
                         type: 'node',
-                        data: dayNode, // کل آبجکت روز
+                        data: dayNode,
                         x,
                         y: currentY,
                         config,
@@ -300,7 +324,7 @@ export const CampaignMap: React.FC<CampaignMapProps> = ({ onOpenDay }) => {
                             let hexEnd = isLocked ? '#111827' : (isCompleted ? '#b45309' : item.config.end);
                             let hexSide = isLocked ? '#000000' : (isCompleted ? '#78350f' : '#000000');
 
-                            const Icon = isLocked ? Lock : (isCompleted ? Check : Music); // آیکون ساده شده
+                            const Icon = isLocked ? Lock : (isCompleted ? Check : Music); 
                             const iconColor = isLocked ? "text-slate-500" : "text-white";
 
                             return (
@@ -313,7 +337,6 @@ export const CampaignMap: React.FC<CampaignMapProps> = ({ onOpenDay }) => {
                                     <div className="relative flex flex-col items-center group">
 
                                         <button
-                                            // 🚨 تغییر مهم: پاس دادن شناسه روز (dayId)
                                             onClick={() => !isLocked && onOpenDay(data.id)} 
                                             className={`
                                                 relative w-36 h-36 flex items-center justify-center

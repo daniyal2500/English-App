@@ -1,131 +1,188 @@
 // src/components/organisms/lessons/LessonContainer.tsx
 
-import React, { useState, useEffect } from 'react';
-// اصلاح: ایمپورت Lesson و MixedContent به جای Level
-import { Lesson, MixedContent } from '../../../types';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Lesson } from '../../../types';
+import { validateLessonContent } from '../../../schemas/contentSchema';
 import { VideoLesson } from './VideoLesson';
 import { QuizLesson } from './QuizLesson';
 import { PracticeLesson } from './PracticeLesson';
-import { ChevronRight } from 'lucide-react';
+// نکته: در فاز بعدی ScrollingTab رو آپدیت میکنیم، فعلا از همون که هست استفاده میکنیم
+// یا اگر ارور داد فعلا کامنتش کن تا فاز ۳
+import { ScrollingTab } from './ScrollingTab'; 
+import { ChevronRight, AlertTriangle } from 'lucide-react';
 
 interface LessonContainerProps {
-  // اصلاح: استفاده از تایپ Lesson
   level: Lesson; 
   onComplete: (score?: number, stars?: 1 | 2 | 3 | 4 | 5) => void;
 }
 
 export const LessonContainer: React.FC<LessonContainerProps> = ({ level: lesson, onComplete }) => {
+  // استیت برای مدیریت مراحل درس‌های ترکیبی
   const [stageIndex, setStageIndex] = useState(0);
+  
+  // استیت برای دیتای ولیدیت شده
+  const [validatedContent, setValidatedContent] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // Reset stage when lesson ID changes
+  // 1. Validation Logic (قلب تپنده امنیت)
   useEffect(() => {
+    try {
+      // اگر درس ترکیبی (Mixed) باشد
+      if (lesson.type === 'mixed') {
+        const rawContent = lesson.content as any;
+        // چک میکنیم که آرایه stages وجود داشته باشه
+        if (!rawContent.stages || !Array.isArray(rawContent.stages)) {
+          throw new Error("Invalid Mixed Content: 'stages' array is missing.");
+        }
+        // تک تک استیج‌ها رو ولیدیت میکنیم
+        const validStages = rawContent.stages.map((stage: any, idx: number) => {
+           const validData = validateLessonContent(stage.type, stage.content);
+           return { ...stage, content: validData };
+        });
+        setValidatedContent({ stages: validStages });
+      } 
+      // درس‌های معمولی
+      else {
+        const validData = validateLessonContent(lesson.type, lesson.content);
+        setValidatedContent(validData);
+      }
+      setError(null);
+    } catch (err) {
+      console.error("Content Validation Error:", err);
+      setError("فرمت محتوای درس نامعتبر است. لطفاً با پشتیبانی تماس بگیرید.");
+    }
+    // ریست کردن استیج وقتی درس عوض میشه
     setStageIndex(0);
-  }, [lesson.id]);
+  }, [lesson]);
 
-  // --- Helper to render a single stage ---
-  const renderStage = (type: string, content: any, titleOverride?: string, handleNext?: () => void) => {
-    switch (type) {
-      case 'video':
-        return (
-          <VideoLesson
-            title={titleOverride || lesson.title}
-            // در ساختار جدید، توضیحات یا در خود کانتنت است یا در مشخصات درس
-            description={content?.tip || content?.description || lesson.description}
-            onComplete={() => (handleNext ? handleNext() : onComplete(100, 5))}
-          />
-        );
-      case 'quiz':
-        return (
-          <QuizLesson
-            question={content?.question || ''}
-            options={content?.options || []}
-            correctIndex={content?.correctIndex ?? 0}
-            onComplete={() => (handleNext ? handleNext() : onComplete(100, 5))}
-          />
-        );
-      case 'practice':
-        return (
-          <PracticeLesson
-            content={content}
-            onComplete={() => (handleNext ? handleNext() : onComplete(undefined, undefined))}
-          />
-        );
-      default:
-        return <div className="text-white text-center mt-10">نوع محتوا پشتیبانی نمی‌شود: {type}</div>;
+  // اگر ارور داشتیم (فرمت جیسون غلط بود)
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-red-400 p-6 text-center">
+        <AlertTriangle size={48} className="mb-4 opacity-80" />
+        <h3 className="font-bold text-lg mb-2">خطا در بارگذاری درس</h3>
+        <p className="text-sm opacity-70">{error}</p>
+        <p className="text-xs mt-4 font-mono bg-black/20 p-2 rounded">Lesson ID: {lesson.id}</p>
+      </div>
+    );
+  }
+
+  if (!validatedContent) return <div className="text-white text-center mt-20">در حال پردازش...</div>;
+
+  // --- مدیریت نویگیشن بین مراحل (برای Mixed) ---
+  
+  // استخراج دیتای مرحله فعلی
+  let currentType = lesson.type;
+  let currentContent = validatedContent;
+  let currentTitle = lesson.title;
+  let totalStages = 1;
+
+  if (lesson.type === 'mixed') {
+    const stages = validatedContent.stages;
+    const currentStage = stages[stageIndex];
+    currentType = currentStage.type;
+    currentContent = currentStage.content;
+    currentTitle = currentStage.title || lesson.title; // اگر استیج تایتل نداشت، تایتل کلی رو نشون بده
+    totalStages = stages.length;
+  }
+
+  // تابعی که وقتی یک مرحله (یا کل درس) تموم میشه صدا زده میشه
+  const handleStageComplete = (score: number = 100, stars: 1 | 2 | 3 | 4 | 5 = 5) => {
+    if (lesson.type === 'mixed') {
+      if (stageIndex < totalStages - 1) {
+        // رفتن به مرحله بعد
+        setStageIndex(prev => prev + 1);
+      } else {
+        // کل درس تموم شد
+        onComplete(score, stars);
+      }
+    } else {
+      // درس تک مرحله‌ای بود و تموم شد
+      onComplete(score, stars);
     }
   };
 
-  // --- Handle Mixed Lessons (Multi-stage) ---
-  if (lesson.type === 'mixed') {
-    // کست کردن محتوا به MixedContent
-    const mixedContent = lesson.content as MixedContent;
-    const stages = mixedContent?.stages || [];
-    const currentStage = stages[stageIndex];
-    
-    // جلوگیری از تقسیم بر صفر
-    const progressPercent = stages.length > 0 ? ((stageIndex) / stages.length) * 100 : 0;
+  // --- رندر کننده هوشمند (The Renderer Switch) ---
+  const renderContent = () => {
+    switch (currentType) {
+      case 'video':
+        return (
+          <VideoLesson
+            title={currentTitle}
+            description={currentContent.description || currentContent.tip || "ویدیوی آموزشی"}
+            onComplete={() => handleStageComplete()}
+          />
+        );
 
-    const handleStageComplete = () => {
-      if (stageIndex < stages.length - 1) {
-        setStageIndex(prev => prev + 1);
-      } else {
-        onComplete();
-      }
-    };
+      case 'quiz':
+        return (
+          <QuizLesson
+            question={currentContent.question}
+            options={currentContent.options}
+            correctIndex={currentContent.correctIndex}
+            onComplete={() => handleStageComplete()}
+          />
+        );
 
-    const handlePreviousStage = () => {
-      if (stageIndex > 0) {
-        setStageIndex(prev => prev - 1);
-      }
-    };
+      case 'practice':
+        // اینجا جادو اتفاق میفته: تشخیص نوع تمرین
+        if (currentContent.mode === 'scrolling') {
+          return (
+            <ScrollingTab
+              sequence={currentContent.notes || currentContent.sequence} 
+              tempo={currentContent.bpm}
+              // ✅ خط زیر رو حتما اضافه کن:
+              backingTrackUrl={currentContent.backingTrackUrl} 
+              onComplete={() => handleStageComplete()}
+            />
+          );
+        } else {
+          // حالت استاتیک (آکورد یا تمرین ساده)
+          return (
+            <PracticeLesson
+              content={currentContent}
+              onComplete={() => handleStageComplete()}
+            />
+          );
+        }
 
-    if (!currentStage) return <div className="text-white">Error loading stage</div>;
+      default:
+        return <div>نوع محتوا پشتیبانی نمی‌شود: {currentType}</div>;
+    }
+  };
 
-    return (
-      <div className="flex flex-col h-full w-full relative">
-        {/* Stage Progress Bar */}
-        <div className="w-full px-6 mb-4 flex items-center gap-2">
+  return (
+    <div className="flex flex-col h-full w-full relative">
+      {/* Progress Bar (فقط اگر درس چند مرحله‌ای باشه نشون میدیم) */}
+      {totalStages > 1 && (
+        <div className="w-full px-6 mb-4 flex items-center gap-2 pt-4">
           {stageIndex > 0 && (
             <button
-              onClick={handlePreviousStage}
+              onClick={() => setStageIndex(prev => prev - 1)}
               className="p-1 rounded-full hover:bg-white/10 text-slate-400 transition-colors"
-              aria-label="Previous Stage"
             >
               <ChevronRight size={20} className="rotate-180" />
             </button>
           )}
           <div className="flex-1">
             <div className="flex justify-between text-xs text-slate-400 mb-1">
-              <span>مرحله {stageIndex + 1} از {stages.length}</span>
-              <span>{Math.round(progressPercent)}%</span>
+              <span>مرحله {stageIndex + 1}</span>
+              <span>{Math.round(((stageIndex) / totalStages) * 100)}%</span>
             </div>
             <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-green-500 transition-all duration-500 ease-out"
-                style={{ width: `${((stageIndex + 1) / stages.length) * 100}%` }}
+                style={{ width: `${((stageIndex + 1) / totalStages) * 100}%` }}
               ></div>
             </div>
           </div>
         </div>
+      )}
 
-        {/* Render Current Stage */}
-        <div className="flex-1" key={stageIndex}>
-          {renderStage(
-            currentStage.type, 
-            currentStage.content, 
-            currentStage.title, 
-            handleStageComplete
-          )}
-        </div>
+      {/* Render Current Stage */}
+      <div className="flex-1 overflow-hidden">
+        {renderContent()}
       </div>
-    );
-  }
-
-  // --- Handle Single Lessons (Simple) ---
-  // در ساختار جدید، lesson.content مستقیماً محتوای مربوطه (ویدیو/تمرین/...) است
-  return (
-    <div className="h-full w-full" key={lesson.id}>
-      {renderStage(lesson.type, lesson.content)}
     </div>
   );
 };
