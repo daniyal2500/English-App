@@ -1,0 +1,137 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "close": "Close",
+        "back": "Back",
+        "next": "Next",
+        "previous": "Previous",
+        "start": "Start",
+        "finish": "Finish",
+        "retry": "Retry"
+    },
+    "nav": {
+        "home": "Home",
+        "profile": "Profile",
+        "shop": "Shop",
+        "leaderboard": "Leaderboard",
+        "lessons": "Lessons"
+    },
+    "onboarding": {
+        "title": "Welcome to Guitar World",
+        "subtitle": "Start Your Musical Journey",
+        "description": "With Guitar App, learning guitar is like playing a fun game!",
+        "startButton": "Start Playing"
+    },
+    "login": {
+        "title": "Login",
+        "subtitle": "Join the Music Family",
+        "nameLabel": "Your Name",
+        "namePlaceholder": "Enter your name",
+        "loginButton": "Enter App",
+        "skip": "Skip",
+        "withGoogle": "Login with Google",
+        "orContinueWith": "Or continue with"
+    },
+    "home": {
+        "title": "Map",
+        "welcome": "Welcome",
+        "currentDay": "Current Day",
+        "daysCompleted": "Days Completed",
+        "offline": "Demo Mode (Database Empty or Disconnected)",
+        "online": "Connected to Database"
+    },
+    "lesson": {
+        "locked": "Locked",
+        "unlocked": "Unlocked",
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "start": "Start Lesson",
+        "continue": "Continue Lesson",
+        "retry": "Retry",
+        "complete": "Lesson Complete",
+        "score": "Score",
+        "practiceCompleted": "Practice Completed",
+        "checkAnswer": "Check Answer",
+        "correct": "Correct!",
+        "incorrect": "Incorrect!",
+        "nextLesson": "Next Lesson",
+        "stage": "Stage",
+        "of": "of",
+        "instruction": "Instruction",
+        "listening": "Listening to notes...",
+        "micError": "Microphone not available",
+        "allowMic": "Please allow microphone access"
+    },
+    "lessonComplete": {
+        "title": "Excellent!",
+        "subtitle": "You're one step closer to mastering guitar",
+        "xpEarned": "XP Earned",
+        "gemsEarned": "Gems Earned",
+        "totalXP": "Total XP",
+        "continue": "Continue",
+        "shareSuccess": "Share Success"
+    },
+    "profile": {
+        "title": "Profile",
+        "level": "Level",
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced",
+        "streak": "Streak",
+        "daysInARow": "Days in a row",
+        "weeklyLeague": "Weekly League",
+        "myToolkit": "My Toolkit",
+        "totalXP": "Total XP",
+        "gems": "Gems",
+        "rank": "Rank",
+        "level_beginner": "Beginner Level Student"
+    },
+    "leaderboard": {
+        "title": "Hall of Fame",
+        "subtitle": "Bronze League - Week 5",
+        "you": "You",
+        "rank": "Rank"
+    },
+    "shop": {
+        "title": "Shop",
+        "hearts": "Hearts",
+        "gems": "Gems",
+        "streakFreeze": "Streak Freeze",
+        "buy": "Buy",
+        "price": "Price",
+        "purchaseSuccess": "Purchase successful",
+        "purchaseFailed": "Purchase failed",
+        "notEnoughGems": "Not enough gems"
+    },
+    "game": {
+        "hearts": "Hearts",
+        "gems": "Gems",
+        "xp": "Experience Points",
+        "streak": "Streak",
+        "level": "Level",
+        "progress": "Progress"
+    },
+    "audio": {
+        "micPermissionDenied": "Microphone permission denied",
+        "micNotAvailable": "Microphone not available",
+        "checkingPitch": "Checking pitch...",
+        "playNote": "Play the note",
+        "correctNote": "Correct note!",
+        "wrongNote": "Wrong note"
+    },
+    "errors": {
+        "generic": "An error occurred",
+        "network": "Network error",
+        "server": "Server error",
+        "notFound": "Not found",
+        "unauthorized": "Unauthorized",
+        "tryAgain": "Try again"
+    }
+}

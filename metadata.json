@@ -1,0 +1,7 @@
+{
+  "name": "Danial Guitar - Gamified Learning",
+  "description": "A gamified guitar learning application inspired by Duolingo and Yousician, tailored for Persian speakers.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ایمپورت فونت وزیر */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap');
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background-color: #020617; /* Very Dark Navy Base */
+  color: white;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* اسکرول بار مخفی و زیبا */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}

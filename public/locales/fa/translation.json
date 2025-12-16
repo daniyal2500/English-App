@@ -1,0 +1,137 @@
+{
+    "common": {
+        "loading": "در حال بارگذاری...",
+        "error": "خطا",
+        "success": "موفق",
+        "cancel": "لغو",
+        "confirm": "تایید",
+        "save": "ذخیره",
+        "delete": "حذف",
+        "edit": "ویرایش",
+        "close": "بستن",
+        "back": "بازگشت",
+        "next": "بعدی",
+        "previous": "قبلی",
+        "start": "شروع",
+        "finish": "پایان",
+        "retry": "تلاش مجدد"
+    },
+    "nav": {
+        "home": "خانه",
+        "profile": "پروفایل",
+        "shop": "فروشگاه",
+        "leaderboard": "رده‌بندی",
+        "lessons": "درس‌ها"
+    },
+    "onboarding": {
+        "title": "به دنیای گیتار خوش آمدید",
+        "subtitle": "سفر موسیقی خود را آغاز کنید",
+        "description": "با گیتار من، یادگیری گیتار مثل یک بازی جذاب است!",
+        "startButton": "شروع نوازندگی"
+    },
+    "login": {
+        "title": "ورود به حساب کاربری",
+        "subtitle": "به خانواده موسیقی بپیوندید",
+        "nameLabel": "نام شما",
+        "namePlaceholder": "نام خود را وارد کنید",
+        "loginButton": "ورود به برنامه",
+        "skip": "رد کردن",
+        "withGoogle": "ورود با گوگل",
+        "orContinueWith": "یا ادامه با"
+    },
+    "home": {
+        "title": "نقشه",
+        "welcome": "خوش آمدید",
+        "currentDay": "روز فعلی",
+        "daysCompleted": "روز تکمیل شده",
+        "offline": "حالت دمو (دیتابیس خالی یا قطع)",
+        "online": "متصل به دیتابیس"
+    },
+    "lesson": {
+        "locked": "قفل شده",
+        "unlocked": "باز شده",
+        "completed": "تکمیل شده",
+        "inProgress": "در حال انجام",
+        "start": "شروع درس",
+        "continue": "ادامه درس",
+        "retry": "تلاش مجدد",
+        "complete": "درس تکمیل شد",
+        "score": "امتیاز",
+        "practiceCompleted": "تمرین انجام شد",
+        "checkAnswer": "بررسی پاسخ",
+        "correct": "صحیح!",
+        "incorrect": "نادرست!",
+        "nextLesson": "درس بعدی",
+        "stage": "مرحله",
+        "of": "از",
+        "instruction": "دستورالعمل",
+        "listening": "به نت‌ها گوش می‌دهم...",
+        "micError": "میکروفون در دسترس نیست",
+        "allowMic": "لطفاً دسترسی به میکروفون را مجاز کنید"
+    },
+    "lessonComplete": {
+        "title": "عالی!",
+        "subtitle": "یک قدم دیگر به نوازندگی نزدیک‌تر شدی",
+        "xpEarned": "XP دریافتی",
+        "gemsEarned": "الماس دریافتی",
+        "totalXP": "مجموع XP",
+        "continue": "ادامه",
+        "shareSuccess": "اشتراک‌گذاری موفقیت"
+    },
+    "profile": {
+        "title": "پروفایل",
+        "level": "سطح",
+        "beginner": "مبتدی",
+        "intermediate": "متوسط",
+        "advanced": "پیشرفته",
+        "streak": "تمرین مستمر",
+        "daysInARow": "روز پشت سر هم",
+        "weeklyLeague": "لیگ هفتگی",
+        "myToolkit": "جعبه ابزار من",
+        "totalXP": "مجموع XP",
+        "gems": "الماس‌ها",
+        "rank": "رتبه",
+        "level_beginner": "هنرجوی سطح مقدماتی"
+    },
+    "leaderboard": {
+        "title": "تالار مشاهیر",
+        "subtitle": "لیگ برنز - هفته ۵",
+        "you": "شما",
+        "rank": "رتبه"
+    },
+    "shop": {
+        "title": "فروشگاه",
+        "hearts": "قلب‌ها",
+        "gems": "الماس‌ها",
+        "streakFreeze": "فریز استریک",
+        "buy": "خرید",
+        "price": "قیمت",
+        "purchaseSuccess": "خرید با موفقیت انجام شد",
+        "purchaseFailed": "خرید ناموفق بود",
+        "notEnoughGems": "الماس کافی ندارید"
+    },
+    "game": {
+        "hearts": "قلب‌ها",
+        "gems": "الماس‌ها",
+        "xp": "امتیاز تجربه",
+        "streak": "روزهای متوالی",
+        "level": "سطح",
+        "progress": "پیشرفت"
+    },
+    "audio": {
+        "micPermissionDenied": "دسترسی به میکروفون رد شد",
+        "micNotAvailable": "میکروفون در دسترس نیست",
+        "checkingPitch": "در حال بررسی نت...",
+        "playNote": "نت را بنوازید",
+        "correctNote": "نت درست!",
+        "wrongNote": "نت اشتباه"
+    },
+    "errors": {
+        "generic": "خطایی رخ داد",
+        "network": "خطای شبکه",
+        "server": "خطای سرور",
+        "notFound": "یافت نشد",
+        "unauthorized": "غیرمجاز",
+        "tryAgain": "دوباره تلاش کنید"
+    }
+}
