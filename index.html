@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#0f172a" />
 
-    <!-- PWA Settings -->
-    <title>Danial Guitar</title>
-    <meta name="description" content="یادگیری گیتار به سبک بازی">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
 
-    <!-- Icons -->
-    <link rel="icon" type="image/svg+xml" href="/icon.svg">
-    <link rel="apple-touch-icon" href="/icon.svg">
-    <link rel="manifest" href="/manifest.json">
+  <!-- PWA Settings -->
+  <title>Danial Guitar</title>
+  <meta name="description" content="یادگیری گیتار به سبک بازی">
 
-    <!-- Mobile Capable -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Danial Guitar">
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="manifest" href="/manifest.json">
 
-    <!-- Main Styles (Compiled by Vite) -->
-    <!-- نیازی به لینک کردن دستی index.css نیست اگر در index.tsx ایمپورت شده باشد، اما بودنش ضرر ندارد -->
-  </head>
+  <!-- Mobile Capable -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Danial Guitar">
 
-  <body>
-    <div id="root"></div>
+  <!-- Main Styles (Compiled by Vite) -->
+  <!-- نیازی به لینک کردن دستی index.css نیست اگر در index.tsx ایمپورت شده باشد، اما بودنش ضرر ندارد -->
+</head>
 
-    <!-- Service Worker Registration -->
-    <script>
-      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('SW Registered'))
-            .catch(err => console.log('SW Registration skipped (dev mode)'));
-        });
-      }
-    </script>
-    
-    <!-- App Entry Point -->
-    <script type="module" src="/src/index.tsx"></script>
-  </body>
+<body>
+  <div id="root"></div>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('SW Registered'))
+          .catch(err => console.log('SW Registration skipped (dev mode)'));
+      });
+    }
+  </script>
+
+  <!-- App Entry Point -->
+  <script type="module" src="/src/index.tsx"></script>
+</body>
+
 </html>
